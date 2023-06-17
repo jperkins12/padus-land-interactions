@@ -1,9 +1,10 @@
 import sys
 
-from arcgis.features import FeatureSet
+from arcgis.features import FeatureSet, Feature
 from arcgis.geometry import Polygon, intersect
 from arcgis.geometry.filters import intersects
 from arcgis.gis import GIS
+from shapely import from_geojson
 
 # manager type layer: https://services.arcgis.com/v01gqwM5QqNysAAi/ArcGIS/rest/services/Manager_Type/FeatureServer
 
@@ -16,6 +17,10 @@ class PadusConnector(object):
 
         gis = GIS()
         self.manager_type_layer = gis.content.get(MANAGER_TYPE_ITEM_ID).layers[0]
+
+    @staticmethod
+    def readGeoJson(geojson_str: str) -> Polygon:
+        return Polygon().from_shapely(from_geojson(geojson_str))
 
     # Return PADUS features that intersect a given area
     def queryPadusIntersection(self, area: Polygon) -> FeatureSet:
@@ -33,6 +38,34 @@ class PadusConnector(object):
         intersection_area = intersection_result[0]  # type: ignore
 
         return intersection_area
+
+    def __processIntersectingFeature(
+        self, area: Polygon, feature: Feature
+    ) -> list[dict]:
+        feature_poly = Polygon(feature.geometry)
+        intersection_geom = self.getIntersectionArea(area, feature_poly)
+        intersection_area = intersection_geom.project_as(3857).area
+        intersection_area_pct = round(intersection_area / area.project_as(3857).area, 3)  # type: ignore
+
+        return {
+            "padus_id": feature.attributes["OBJECTID"],
+            "manager_type": feature.attributes["Mang_Type"],
+            "feature_class": feature.attributes["FeatClass"],
+            "designation_type": feature.attributes["Des_Tp"],
+            "name": feature.attributes["Loc_Nm"],
+            "intersection_geom": intersection_geom.WKT,
+            "intersection_area": intersection_area,
+            "overlap_area_pct": intersection_area_pct,
+        }  # type: ignore
+
+    def getAllIntersectingAreas(self, area: Polygon) -> list[dict]:
+        query_feature_set = self.queryPadusIntersection(area)
+        intersecting_geoms = [
+            self.__processIntersectingFeature(area, f)
+            for f in query_feature_set.features
+        ]
+
+        return intersecting_geoms
 
 
 if __name__ == "__main__":
