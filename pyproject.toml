@@ -13,6 +13,7 @@ arcgis = "^2.1.0.3"
 urllib3 = "1.26.15"
 shapely = "^2.0.1"
 pyproj = "^3.6.0"
+pydantic = "^1.10.9"
 
 
 [tool.poetry.group.dev.dependencies]

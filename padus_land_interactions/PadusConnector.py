@@ -1,10 +1,22 @@
 import sys
 
-from arcgis.features import FeatureSet, Feature
+from arcgis.features import Feature, FeatureSet
 from arcgis.geometry import Polygon, intersect
 from arcgis.geometry.filters import intersects
 from arcgis.gis import GIS
+from pydantic import BaseModel
 from shapely import from_geojson
+
+
+class IntersectingFeature(BaseModel):
+    padus_id: int
+    manager_type: str
+    feature_class: str
+    designation_type: str
+    name: str
+    intersection_geom: str
+    overlap_area_pct: float
+
 
 # manager type layer: https://services.arcgis.com/v01gqwM5QqNysAAi/ArcGIS/rest/services/Manager_Type/FeatureServer
 
@@ -41,24 +53,24 @@ class PadusConnector(object):
 
     def __processIntersectingFeature(
         self, area: Polygon, feature: Feature
-    ) -> list[dict]:
+    ) -> IntersectingFeature:
         feature_poly = Polygon(feature.geometry)
         intersection_geom = self.getIntersectionArea(area, feature_poly)
         intersection_area = intersection_geom.project_as(3857).area
         intersection_area_pct = round(intersection_area / area.project_as(3857).area, 3)  # type: ignore
 
-        return {
-            "padus_id": feature.attributes["OBJECTID"],
-            "manager_type": feature.attributes["Mang_Type"],
-            "feature_class": feature.attributes["FeatClass"],
-            "designation_type": feature.attributes["Des_Tp"],
-            "name": feature.attributes["Loc_Nm"],
-            "intersection_geom": intersection_geom.WKT,
-            "intersection_area": intersection_area,
-            "overlap_area_pct": intersection_area_pct,
-        }  # type: ignore
+        return IntersectingFeature(
+            padus_id=feature.attributes["OBJECTID"],
+            manager_type=feature.attributes["Mang_Type"],
+            feature_class=feature.attributes["FeatClass"],
+            designation_type=feature.attributes["Des_Tp"],
+            name=feature.attributes["Loc_Nm"],
+            intersection_geom=intersection_geom.WKT,
+            intersection_area=intersection_area,
+            overlap_area_pct=intersection_area_pct,
+        )
 
-    def getAllIntersectingAreas(self, area: Polygon) -> list[dict]:
+    def getAllIntersectingAreas(self, area: Polygon) -> list[IntersectingFeature]:
         query_feature_set = self.queryPadusIntersection(area)
         intersecting_geoms = [
             self.__processIntersectingFeature(area, f)
