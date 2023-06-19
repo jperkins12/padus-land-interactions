@@ -15,6 +15,7 @@ class IntersectingFeature(BaseModel):
     designation_type: str
     name: str
     intersection_geom: str
+    intersection_area: float
     overlap_area_pct: float
 
 
