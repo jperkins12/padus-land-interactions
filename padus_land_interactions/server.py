@@ -1,12 +1,25 @@
 import logging
+from argparse import ArgumentParser, Namespace
+
 import ngrok
 from flask import Flask, request
 from shapely.errors import GEOSException
 
 from padus_land_interactions.PadusConnector import PadusConnector
 
+
+def getOptions() -> Namespace:
+    parser = ArgumentParser()
+
+    parser.add_argument("--debug", action="store_true", help="Enable flask debug mode")
+    parser.add_argument("--ngrok", action="store_true", help="Start ngrok tunnel")
+
+    args, uknown = parser.parse_known_args()
+
+    return args
+
+
 logging.basicConfig(level=logging.INFO)
-# tunnel = ngrok.werkzeug_develop()
 
 app = Flask(__name__)
 
@@ -34,4 +47,10 @@ def invalidGeojson(e):
 
 
 if __name__ == "__main__":
-    app.run("localhost", port=8000, debug=True)
+    args = getOptions()
+    debug = False
+    if args.debug:
+        debug = True
+    if args.ngrok:
+        tunnel = ngrok.werkzeug_develop()
+    app.run("localhost", port=8000, debug=debug)

@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from shapely import from_geojson
 
 
+# class for returning info intersecting features
 class IntersectingFeature(BaseModel):
     padus_id: int
     manager_type: str
@@ -32,6 +33,7 @@ class PadusConnector(object):
         gis = GIS()
         self.manager_type_layer = gis.content.get(MANAGER_TYPE_ITEM_ID).layers[0]
 
+    # helper method to read geojson string into ArcGIS polygon
     @staticmethod
     def readGeoJson(geojson_str: str) -> Polygon:
         return Polygon().from_shapely(from_geojson(geojson_str))
@@ -82,7 +84,7 @@ class PadusConnector(object):
 
         return_object = {"intersecting_features": intersecting_geoms}
 
-        # geojson support is mainly for the mapbox component on retool
+        # geojson support is for the mapbox component on retool
         if geojson:
             return_object["feature_set_geojson"] = json.loads(
                 query_feature_set.to_geojson
