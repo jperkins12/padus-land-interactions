@@ -36,4 +36,4 @@ def test_getAllIntersectingAreas() -> None:
     padus = PadusConnector()
     intersecting_areas_return = padus.getAllIntersectingAreas(test_area)
 
-    assert len(intersecting_areas_return) == 2
+    assert len(intersecting_areas_return["intersecting_features"]) == 2

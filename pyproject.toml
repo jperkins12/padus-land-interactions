@@ -18,6 +18,7 @@ pydantic = "^1.10.9"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.2"
+ngrok = "^0.8.1"
 
 [build-system]
 requires = ["poetry-core"]

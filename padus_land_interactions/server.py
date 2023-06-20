@@ -1,7 +1,12 @@
+import logging
+import ngrok
 from flask import Flask, request
 from shapely.errors import GEOSException
 
 from padus_land_interactions.PadusConnector import PadusConnector
+
+logging.basicConfig(level=logging.INFO)
+# tunnel = ngrok.werkzeug_develop()
 
 app = Flask(__name__)
 
@@ -13,8 +18,13 @@ padus = PadusConnector()
 def getPadusInteractions():
     request_geom = PadusConnector().readGeoJson(request.data)  # type: ignore
 
-    intersections = padus.getAllIntersectingAreas(request_geom)
-    return [i.dict() for i in intersections]
+    get_geojson = False
+    if request.args.get("geojson", "false").lower() == "true":
+        get_geojson = True
+
+    intersections = padus.getAllIntersectingAreas(request_geom, geojson=get_geojson)
+    print(intersections)
+    return intersections
 
 
 # handle invalid json error

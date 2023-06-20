@@ -1,3 +1,4 @@
+from urllib import response
 from helpers import SAMPLE_GEOJSON_1_PATH, load_json_as_str
 
 from padus_land_interactions.server import app
@@ -10,8 +11,11 @@ def test_interactions():
     with app.test_client() as test_client:
         response = test_client.post("/interactions", data=test_json)
         assert response.status_code == 200
-        assert len(response.json) == 2
-        assert "Joseph D. Grant Park" in [i["name"] for i in response.json]
+        assert len(response.json["intersecting_features"]) == 2
+        assert "Joseph D. Grant Park" in [
+            i["name"] for i in response.json["intersecting_features"]
+        ]
+        assert "feature_set_geojson" not in response.json.keys()
 
 
 # ensure invalid json format returns 400
@@ -22,3 +26,9 @@ def test_invalid_geojson():
         response = test_client.post("/interactions", data=invalid_json)
         assert response.status_code == 400
         assert response.json["error"] == "invalid geojson input"
+
+
+def test_return_geojson():
+    with app.test_client() as test_client:
+        response = test_client.post("/interactions?geojson=true", data=test_json)
+        assert "feature_set_geojson" in response.json.keys()

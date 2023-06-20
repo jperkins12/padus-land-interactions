@@ -1,3 +1,4 @@
+import json
 import sys
 
 from arcgis.features import Feature, FeatureSet
@@ -38,7 +39,7 @@ class PadusConnector(object):
     # Return PADUS features that intersect a given area
     def queryPadusIntersection(self, area: Polygon) -> FeatureSet:
         geom_filter = intersects(area)
-        return self.manager_type_layer.query(geometry_filter=geom_filter)
+        return self.manager_type_layer.query(geometry_filter=geom_filter, out_sr=4326)
 
     # Return intersection polygon in desired srid
     def getIntersectionArea(
@@ -66,19 +67,28 @@ class PadusConnector(object):
             feature_class=feature.attributes["FeatClass"],
             designation_type=feature.attributes["Des_Tp"],
             name=feature.attributes["Loc_Nm"],
-            intersection_geom=intersection_geom.WKT,
+            intersection_geom=intersection_geom.project_as(4326).WKT,
             intersection_area=intersection_area,
             overlap_area_pct=intersection_area_pct,
         )
 
-    def getAllIntersectingAreas(self, area: Polygon) -> list[IntersectingFeature]:
+    # the primary method that queries the geom from the API call against the PADUS data and returns the result
+    def getAllIntersectingAreas(self, area: Polygon, geojson: bool = False) -> dict:
         query_feature_set = self.queryPadusIntersection(area)
         intersecting_geoms = [
-            self.__processIntersectingFeature(area, f)
+            self.__processIntersectingFeature(area, f).dict()
             for f in query_feature_set.features
         ]
 
-        return intersecting_geoms
+        return_object = {"intersecting_features": intersecting_geoms}
+
+        # geojson support is mainly for the mapbox component on retool
+        if geojson:
+            return_object["feature_set_geojson"] = json.loads(
+                query_feature_set.to_geojson
+            )
+
+        return return_object
 
 
 if __name__ == "__main__":

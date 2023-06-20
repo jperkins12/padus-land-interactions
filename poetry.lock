@@ -1991,6 +1991,25 @@ files = [
 ]
 
 [[package]]
+name = "ngrok"
+version = "0.8.1"
+description = "The ngrok Agent SDK for Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ngrok-0.8.1-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:af0114cf590df8f051cabfd2b9bf5b8db7d3b8cf6b76ec11440c4d546623d7bd"},
+    {file = "ngrok-0.8.1-cp37-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:539d775d170858919fc0ac54fcfc4e113d3e00214fb2e113e2f0a2729081348b"},
+    {file = "ngrok-0.8.1-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:59e80d8d3a081266e0076b62bb66f62b97a36b656026d6b9645b974b3e9607aa"},
+    {file = "ngrok-0.8.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7040ea22d512e72d2c75d7c07fbfb7418488b0f711bd3e35c2ae3890fe270c6b"},
+    {file = "ngrok-0.8.1-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:8d18558a380b3b6cd08d39cbfe849cc4c642197740038eddd0b14ddaa2a3450f"},
+    {file = "ngrok-0.8.1-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:68d31e717dafdddf35305d2f8af0b9b987c2604a9a928998e9c82fa2eb2ce89c"},
+    {file = "ngrok-0.8.1-cp37-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:da438aebb4821c477de2523aac1e7b3f3f8acd4f9fe49cdb2c2326be1ff0aba5"},
+    {file = "ngrok-0.8.1-cp37-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:0400e57f89d44f1a3b3528ed4d9cf8dbbdc056bdbee46977e13c35270398cb55"},
+    {file = "ngrok-0.8.1-cp37-abi3-win32.whl", hash = "sha256:612e966f40dae06ba32b47604ef06ca65e9851a9eb46a6510e14ad317bf270cf"},
+    {file = "ngrok-0.8.1-cp37-abi3-win_amd64.whl", hash = "sha256:a55fe0d0c303ae8d3d081fe57288fa55734d3cc7872437f25e0af8226fd68ce7"},
+]
+
+[[package]]
 name = "notebook"
 version = "6.5.4"
 description = "A web-based notebook environment for interactive computing"
@@ -3723,4 +3742,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.10"
-content-hash = "89c2d350540f4c38acb0192d9e0b7c64d3a2e7c2645a8343430a0a7b5d9d5636"
+content-hash = "fe2f6a8a651c331971911f8ffe31ee5ee539b44cefcfc2edd94392ca04cfa41f"
