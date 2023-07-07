@@ -7,6 +7,9 @@ from shapely.errors import GEOSException
 
 from padus_land_interactions.PadusConnector import PadusConnector
 
+class AreaTooLargeException(Exception):
+    "Raised if the area of the polygon is too large to process"
+    pass
 
 def getOptions() -> Namespace:
     parser = ArgumentParser()
@@ -31,6 +34,9 @@ padus = PadusConnector()
 def getPadusInteractions():
     request_geom = PadusConnector().readGeoJson(request.data)  # type: ignore
 
+    if PadusConnector().checkArea(request_geom):
+        raise AreaTooLargeException
+
     get_geojson = False
     if request.args.get("geojson", "false").lower() == "true":
         get_geojson = True
@@ -45,6 +51,11 @@ def getPadusInteractions():
 def invalidGeojson(e):
     return {"error": "invalid geojson input"}, 400
 
+# handle area too large error
+@app.errorhandler(AreaTooLargeException)
+def areaTooLarge(e):
+    return {"error": "requested polygon area too large"}, 400
+
 
 if __name__ == "__main__":
     args = getOptions()
@@ -53,4 +64,4 @@ if __name__ == "__main__":
         debug = True
     if args.ngrok:
         tunnel = ngrok.werkzeug_develop()
-    app.run("localhost", port=8000, debug=debug)
+    app.run("0.0.0.0", port=8000, debug=debug)

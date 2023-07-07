@@ -37,6 +37,14 @@ class PadusConnector(object):
     @staticmethod
     def readGeoJson(geojson_str: str) -> Polygon:
         return Polygon().from_shapely(from_geojson(geojson_str))
+    
+    # check if the area of the request polygon exceeds a certain threshold
+    @staticmethod
+    def checkArea(area: Polygon):
+        
+        # Use size of Rhode Island as test threshold
+        threshold = 4e9
+        return area.project_as(3857).area > threshold
 
     # Return PADUS features that intersect a given area
     def queryPadusIntersection(self, area: Polygon) -> FeatureSet:

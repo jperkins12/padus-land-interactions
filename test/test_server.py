@@ -32,3 +32,12 @@ def test_return_geojson():
     with app.test_client() as test_client:
         response = test_client.post("/interactions?geojson=true", data=test_json)
         assert "feature_set_geojson" in response.json.keys()
+
+# return error if requested polygon is too large
+def test_area_too_large():
+    too_large_json = load_json_as_str("test/sample_data/too_large.geojson")
+
+    with app.test_client() as test_client:
+        response = test_client.post("interactions?geojson=true", data=too_large_json)
+        assert response.status_code == 400
+        assert response.json["error"] == "requested polygon area too large"
