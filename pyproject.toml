@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "padus-land-interactions"
+version = "0.1.0"
+description = ""
+authors = ["Jamie Perkins <japrkns@gmail.com>"]
+readme = "README.md"
+packages = [{include = "padus_land_interactions"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+flask = "^2.3.2"
+arcgis = "^2.1.0.3"
+urllib3 = "1.26.15"
+shapely = "^2.0.1"
+pyproj = "^3.6.0"
+pydantic = "^1.10.9"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.2"
+ngrok = "^0.8.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
